@@ -12,15 +12,6 @@ const corsHeaders = {
 
 interface BookingConfirmationRequest {
   bookingId: string;
-  userEmail: string;
-  userName: string;
-  spaceName: string;
-  location: string;
-  bookingDate: string;
-  startTime: string;
-  endTime: string;
-  spaceType?: string;
-  purpose?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -35,7 +26,9 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { bookingId }: { bookingId: string } = await req.json();
+    const { bookingId }: BookingConfirmationRequest = await req.json();
+
+    console.log('Processing booking confirmation for ID:', bookingId);
 
     // Fetch booking details with space information
     const { data: booking, error } = await supabase
@@ -55,6 +48,8 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    console.log('Found booking:', booking);
+
     // Format date and time for display
     const bookingDate = new Date(booking.booking_date).toLocaleDateString('en-US', {
       weekday: 'long',
@@ -63,23 +58,26 @@ const handler = async (req: Request): Promise<Response> => {
       day: 'numeric'
     });
 
-    const startTime = new Date(booking.start_time).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
+    // Format time from the stored time strings
+    const formatTime = (timeString: string) => {
+      const time = new Date(`1970-01-01T${timeString}`);
+      return time.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    };
 
-    const endTime = new Date(booking.end_time).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
+    const startTime = formatTime(booking.start_time);
+    const endTime = formatTime(booking.end_time);
+
+    console.log('Sending email to:', booking.email);
 
     // Create booking confirmation email
     const emailResponse = await resend.emails.send({
-      from: "SPARC Workspace <onboarding@resend.dev>",
+      from: "SPARC Workspace <pandyabhavdiya@gmail.com>",
       to: [booking.email],
-      subject: `Booking Confirmed: ${booking.spaces.name} on ${bookingDate}`,
+      subject: `🎉 Booking Confirmed: ${booking.spaces.name} on ${bookingDate}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -112,7 +110,7 @@ const handler = async (req: Request): Promise<Response> => {
                 
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
                   <strong>Location:</strong>
-                  <span>${booking.spaces.location}</span>
+                  <span>${booking.spaces.location || 'Not specified'}</span>
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
@@ -151,7 +149,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="text-align: center; margin-top: 30px;">
               <p style="font-size: 16px; color: #666;">
-                Need help? Contact us at <a href="mailto:support@sparc.com" style="color: #667eea;">support@sparc.com</a>
+                Need help? Contact us at <a href="mailto:pandyabhavdiya@gmail.com" style="color: #667eea;">pandyabhavdiya@gmail.com</a>
               </p>
             </div>
           </div>

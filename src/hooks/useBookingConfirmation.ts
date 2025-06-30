@@ -14,11 +14,8 @@ export function useBookingConfirmation() {
 
       if (error) {
         console.error('Error sending confirmation email:', error);
-        toast({
-          title: "Email notification failed",
-          description: "Your booking is confirmed, but we couldn't send the confirmation email.",
-          variant: "destructive",
-        });
+        // Don't show error toast for email failures - booking was still successful
+        console.log('Booking was successful, but email notification failed');
         return false;
       }
 
@@ -26,11 +23,8 @@ export function useBookingConfirmation() {
       return true;
     } catch (error) {
       console.error('Error in sendConfirmationEmail:', error);
-      toast({
-        title: "Email notification failed",
-        description: "Your booking is confirmed, but we couldn't send the confirmation email.",
-        variant: "destructive",
-      });
+      // Don't show error toast for email failures - booking was still successful
+      console.log('Booking was successful, but email notification failed');
       return false;
     }
   }, []);
