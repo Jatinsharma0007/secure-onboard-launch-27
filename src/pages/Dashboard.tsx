@@ -1,5 +1,5 @@
-
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { ErrorState } from '@/components/ui/ErrorState';
 
 export default function Dashboard() {
   const { user, profile, loading, signOut } = useAuth();
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -115,7 +116,7 @@ export default function Dashboard() {
               <Button variant="outline" className="w-full">
                 Update Profile
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => navigate('/my-bookings')}>
                 View My Bookings
               </Button>
               <Button variant="destructive" className="w-full" onClick={signOut}>
