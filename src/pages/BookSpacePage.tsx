@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
@@ -8,7 +9,6 @@ import { SuggestionBanner } from '@/components/bookings/SuggestionBanner';
 import { toast } from '@/components/ui/use-toast';
 import { useSpaces } from '@/hooks/useSpaces';
 import { useBookings } from '@/hooks/useBookings';
-import { useAvailability } from '@/hooks/useAvailability';
 import { useAuth } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -32,7 +32,6 @@ export default function BookSpacePage() {
   const location = useLocation();
   const { spaces, isLoading: spacesLoading, error: spacesError, fetchSpaces } = useSpaces();
   const { createBooking } = useBookings();
-  const { checkAvailability, isChecking } = useAvailability();
   
   // Get spaceId from URL query params if available
   const searchParams = new URLSearchParams(location.search);
@@ -138,24 +137,6 @@ export default function BookSpacePage() {
     setIsLoading(true);
     
     try {
-      // Check availability before booking
-      const isAvailable = await checkAvailability({
-        spaceId: formData.selectedSpace!,
-        date: formData.date,
-        startTime: formData.startTime,
-        endTime: formData.endTime
-      });
-
-      if (!isAvailable) {
-        toast({
-          title: "Booking Failed",
-          description: "This space is not available at the selected time. Please choose a different time or space.",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-      }
-
       await createBooking({
         space_id: formData.selectedSpace!,
         booking_date: formData.date,
@@ -178,9 +159,7 @@ export default function BookSpacePage() {
       const errorMessage = error.message || "Please try again later";
       toast({
         title: "Booking Failed",
-        description: errorMessage.includes("available") 
-          ? "No rooms are available at the selected time. Please choose a different time slot."
-          : errorMessage,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -366,13 +345,13 @@ export default function BookSpacePage() {
 
                 <Button 
                   onClick={handleBookNow}
-                  disabled={isLoading || isChecking || validationErrors.length > 0}
+                  disabled={isLoading || validationErrors.length > 0}
                   className="w-full flex items-center justify-center gap-2"
                 >
-                  {(isLoading || isChecking) ? (
+                  {isLoading ? (
                     <>
                       <LoadingSpinner size="sm" />
-                      <span>{isChecking ? 'Checking...' : 'Booking...'}</span>
+                      <span>Booking...</span>
                     </>
                   ) : (
                     <>
