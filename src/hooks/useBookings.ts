@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -87,6 +88,12 @@ export function useBookings() {
     }
 
     try {
+      // Create proper timestamp strings
+      const startDateTime = `${bookingData.booking_date}T${bookingData.start_time}:00`;
+      const endDateTime = `${bookingData.booking_date}T${bookingData.end_time}:00`;
+      
+      console.log('Creating booking with timestamps:', { startDateTime, endDateTime });
+
       const { data, error } = await supabase
         .from('bookings')
         .insert({
@@ -97,8 +104,8 @@ export function useBookings() {
           phone: profile.phone,
           role: profile.role,
           booking_date: bookingData.booking_date,
-          start_time: bookingData.start_time,
-          end_time: bookingData.end_time,
+          start_time: startDateTime,
+          end_time: endDateTime,
           space_type: bookingData.space_type,
           location: bookingData.location,
           purpose: bookingData.purpose,
@@ -109,7 +116,12 @@ export function useBookings() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Booking creation error:', error);
+        throw error;
+      }
+
+      console.log('Booking created successfully:', data);
 
       // Send confirmation email
       if (data?.id) {
@@ -122,6 +134,7 @@ export function useBookings() {
         description: "Your space has been booked successfully. Check your email for confirmation.",
       });
     } catch (error: any) {
+      console.error('Create booking error:', error);
       toast({
         title: "Booking failed",
         description: error.message,
