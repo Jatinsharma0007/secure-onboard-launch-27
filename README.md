@@ -1,22 +1,16 @@
-# Welcome to your Lovable project
+# Secure Onboarding Platform
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/37dcbe50-1c98-4635-be16-f16cf865c263
+This is a secure onboarding platform built with modern web technologies.
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/37dcbe50-1c98-4635-be16-f16cf865c263) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+You can work locally using your own IDE by cloning this repo and pushing changes.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -59,15 +53,14 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/37dcbe50-1c98-4635-be16-f16cf865c263) and click on Share -> Publish.
+You can deploy this project using any platform that supports static site hosting, such as:
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Vercel
+- Netlify
+- GitHub Pages
+- AWS Amplify
+- Firebase Hosting
