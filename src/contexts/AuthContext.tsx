@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -193,6 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       
+      // Use window.location.origin to dynamically get the current domain
       const redirectUrl = `${window.location.origin}/auth/callback`;
       
       console.log("Redirecting to:", redirectUrl);
